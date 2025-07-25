@@ -1,4 +1,4 @@
-import { Job } from './types';
+import type { Job } from '../types';
 
 // passed in job, job must match the structure of Job
 export default function JobCard({ job }: { job: Job }) {
