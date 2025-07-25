@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+openai
+google-api-python-client
+google-auth
+google-auth-oauthlib
+beautifulsoup4
+python-dotenv
+supabase

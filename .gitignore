@@ -1,0 +1,29 @@
+.# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# VSCode settings (optional)
+.vscode/
+
+# Token/credentials files
+token.json
+credentials.json
+.env
+
+# Logs
+*.log
+
+# Jupyter Notebooks (if not needed)
+*.ipynb
+
+# Other
+*.sqlite3
