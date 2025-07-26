@@ -1,5 +1,7 @@
 import os
 
+from .db import supabase
+from supabase import Client
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -25,25 +27,41 @@ def get_service():
     return build("gmail", "v1", credentials=creds)
 
 def get_emails(service):
-    response = service.users().messages().list(userId="me", maxResults=10).execute()
+
+    query = "after:2025/07/01"
+    response = service.users().messages().list(userId="me", q=query).execute()
     messages = response.get("messages", [])
     email_data = []
 
     for msg in messages:
         msg_id = msg["id"]
+
+        if is_email_processed(supabase, msg_id):
+            continue  
+
         full_msg = service.users().messages().get(userId="me", id=msg_id, format="full").execute()
         body = extract_body(full_msg)
         
         timestamp_ms = int(full_msg.get("internalDate", 0))
         date = datetime.fromtimestamp(timestamp_ms / 1000.0).strftime("%Y-%m-%d %H:%M:%S")
 
-        if body:
+        if body and is_possibly_job_related(body):
             email_data.append({
                 "body": body,
                 "date": date
             })
+            mark_email_as_processed(supabase, msg_id)
+
 
     return email_data
+
+def is_email_processed(supabase: Client, email_id: str) -> bool:
+    response = supabase.table("processed_emails").select("id").eq("id", email_id).execute()
+    return len(response.data) > 0
+
+def mark_email_as_processed(supabase: Client, email_id: str):
+    supabase.table("processed_emails").insert({"id": email_id}).execute()
+
 
 def extract_body(full_msg):
     #payload stores the content
@@ -74,3 +92,25 @@ def extract_body(full_msg):
         return urlsafe_b64decode(data).decode("utf-8")
     
     return None
+
+def is_possibly_job_related(email_text: str) -> bool:
+    # Lowercase for easy matching
+    text = email_text.lower()
+
+    job_keywords = [
+        "interview", "application", "hiring", "recruiter", "position",
+        "offer", "career", "opportunity", "schedule", "job", "resume",
+        "cv", "linkedin", "talent acquisition", "we're excited", "next steps",
+        "congratulations", "assessment", "apply", "move forward", "update", "applying",
+        "internship", "thanks for applying"
+    ]
+
+    irrelevant_keywords = [
+        "unsubscribe", "newsletter", "password", "receipt", "invoice", 
+        "terms of service", "privacy policy", "sale", "promo", "limited time", 
+        "your order", "shipping", "tracking number", "alert", "issue"
+    ]
+
+    if any(word in text for word in job_keywords) and not any(word in text for word in irrelevant_keywords):
+        return True
+    return False

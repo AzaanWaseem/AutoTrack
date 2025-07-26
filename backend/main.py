@@ -12,12 +12,7 @@ def main():
         ai_data = ai_parse_email(body, date)
 
         if ai_data.get("job_related"):
-            insert_job({
-                "company": ai_data["company"],
-                "job_title": ai_data["position"],        
-                "date": ai_data["application_date"],
-                "description": ai_data["description"] 
-            })
+            insert_job(ai_data)
     
 
 if __name__ == "__main__":
