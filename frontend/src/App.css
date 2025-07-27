@@ -1,42 +1,96 @@
-#root {
-  max-width: 1280px;
+:root {
+  --bg-color: #f5f7fa;
+  --text-color: #1a1a1a;
+  --card-bg: #ffffff;
+  --accent: #0077ff;
+  --subtitle-color: #4a4a4a;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] {
+  --bg-color: #0f0f0f;
+  --text-color: #f0f0f0;
+  --card-bg: #1c1c1e;
+  --accent: #66ccff;
+  --subtitle-color: #999999;
+  --shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-container {
+  max-width: 900px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2.5rem 1rem;
+}
+
+.header {
   text-align: center;
+  margin-bottom: 2.5rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: var(--text-color);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.subtitle {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--subtitle-color);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.theme-toggle {
+  margin-top: 1rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.card {
-  padding: 2em;
+.theme-toggle:hover {
+  background-color: var(--accent);
+  color: white;
 }
 
-.read-the-docs {
-  color: #888;
+.job-list {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.job-card {
+  background-color: var(--card-bg);
+  padding: 1.5rem 1.75rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-4px);
+}
+
+.job-card h2 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.3rem;
+  color: var(--text-color);
+}
+
+.job-card p {
+  margin: 0.25rem 0;
+  color: var(--subtitle-color);
+  font-size: 0.95rem;
 }

@@ -34,7 +34,7 @@ def ai_parse_email(email_text: str, received_date: str) -> dict:
     "company": "Name of the company",
     "position": "Job title (assume a relevant title)",
     "application_date": "YYYY-MM-DD",
-    "stage": "Current stage of the application (e.g. interview, assessment, offer, rejection, etc)",
+    "stage": "Current stage of the application (Application received, interview, assessment, offer, rejection)",
     "description": "Brief summary or next steps mentioned in the email"
     }}
 

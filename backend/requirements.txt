@@ -1,10 +1,16 @@
 fastapi
 uvicorn
 openai
+tiktoken
+python-dotenv
+
+# Gmail API & OAuth
 google-api-python-client
 google-auth
 google-auth-oauthlib
-beautifulsoup4
-python-dotenv
+
+# Supabase client
 supabase
-tiktoken
+
+# Email parsing
+beautifulsoup4
