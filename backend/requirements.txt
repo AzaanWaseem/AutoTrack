@@ -1,16 +1,26 @@
-fastapi
-uvicorn
-openai
-tiktoken
-python-dotenv
+# FastAPI and server
+fastapi==0.104.1
+uvicorn==0.24.0
+python-dotenv==1.0.0
+
+# AI and Text Processing
+groq==0.4.2
+tiktoken==0.5.2
 
 # Gmail API & OAuth
-google-api-python-client
-google-auth
-google-auth-oauthlib
+google-api-python-client==2.108.0
+google-auth==2.23.4
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
 
-# Supabase client
-supabase
+# Database
+supabase==2.3.1
+postgrest==0.13.0
 
 # Email parsing
-beautifulsoup4
+beautifulsoup4==4.12.2
+html2text==2020.1.16
+
+# Utilities
+python-dateutil==2.8.2
+httpx==0.25.1

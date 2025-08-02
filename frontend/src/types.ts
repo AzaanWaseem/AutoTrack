@@ -5,6 +5,7 @@ export interface Job {
   first_applied: string | null;
   current_status: string | null;
   latest_update_at: string | null;
+  email_id?: string;  // Add this field
 }
 
 export interface JobUpdate {

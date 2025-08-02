@@ -1,85 +1,89 @@
 import os
 import json
 import re
-import time
-import tiktoken
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
-MAX_TOKENS = 5500
-
 MODEL_NAME = "llama3-70b-8192"
 
-def ai_parse_email(email_text: str, received_date: str) -> dict:
-    email_text = truncate_to_token_limit(email_text)
-
-    prompt = f"""
-    You are a helpful assistant that extracts structured job application updates from emails.
-
-    This application was date is {received_date}.
-
-    Respond ONLY with valid JSON. Do not include any extra text, commentary, or formatting.
-
-    If the email is NOT related to a job application update, respond with:
-    {{ "job_related": false }}
-
-    If the email IS related to a job application update, respond with the following JSON format:
-
-    {{
-    "job_related": true,
-    "company": "Name of the company",
-    "position": "Job title (assume a relevant title)",
-    "application_date": "YYYY-MM-DD",
-    "stage": "Current stage of the application (Application received, interview, assessment, offer, rejection)",
-    "description": "Brief summary or next steps mentioned in the email"
-    }}
-
-    Email:
-    \"\"\"{email_text}\"\"\"
-
-    Respond ONLY with the JSON object. No explanations or extra content.
+def truncate_to_token_limit(text: str, max_tokens: int = 4000) -> str:
     """
+    Intelligently truncate text to stay within Groq's token limit.
+    """
+    # Approximate character limit (4 chars per token)
+    char_limit = max_tokens * 4
+    
+    if len(text) <= char_limit:
+        return text
 
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            chat_completion = client.chat.completions.create(
-                model=MODEL_NAME,
-                messages=[{"role": "user", "content": prompt}]
-            )
+    # Split text into chunks
+    chunks = text.split("\n")
+    
+    # Keep important parts
+    header = "\n".join(chunks[:3])  # First 3 lines
+    footer = "\n".join(chunks[-3:])  # Last 3 lines
+    
+    # Extract email body
+    body = "\n".join(chunks[3:-3])
+    body = body[:char_limit - len(header) - len(footer)]
+    
+    truncated_text = f"{header}\n{body}\n{footer}"
+    print(f"Truncated email from {len(text)} to {len(truncated_text)} characters")
+    
+    return truncated_text
 
-            raw_text = chat_completion.choices[0].message.content.strip()
+def ai_parse_email(email_text: str, received_date: str) -> dict:
+    try:
+        # Truncate email text before processing
+        truncated_text = truncate_to_token_limit(email_text)
+        
+        prompt = f"""
+        Analyze this email and return ONLY a JSON object with no additional text or formatting.
+        Email received on: {received_date}
+
+        Rules:
+        1. Return EXACTLY this format if not job related:
+        {{"job_related": false}}
+
+        2. Return EXACTLY this format if job related:
+        {{
+            "job_related": true,
+            "company": "<company name>",
+            "position": "<job title>",
+            "application_date": "{received_date}",
+            "stage": "<one of: Application Received, Screen, Interview Scheduled, Technical Interview, Assessment, Offer, Rejection, Follow-up>",
+            "description": "<brief summary>"
+        }}
+
+        Email text:
+        {truncated_text}
+        """
+
+        chat_completion = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{
+                "role": "user", 
+                "content": prompt.strip()
+            }],
+            temperature=0.1,
+            max_tokens=500
+        )
+
+        response_text = chat_completion.choices[0].message.content.strip()
+        
+        # Clean the response to ensure valid JSON
+        json_str = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if not json_str:
+            return {"job_related": False}
             
-            match = re.search(r'\{[\s\S]*\}', raw_text)
+        result = json.loads(json_str.group())
+        print(f"Parsed result: {result}")
+        return result
 
-            if match:
-                result = json.loads(match.group(0))
-                return result
-            else:
-                print("Groq response is not in JSON format")
-                return {"job_related": False}
-
-        except Exception as e:
-            if "rate_limit" in str(e).lower() or "429" in str(e):
-                wait_time = 65  # seconds
-                print(f"Rate limit hit. Waiting {wait_time}s before retrying... (Attempt {attempt + 1})")
-                time.sleep(wait_time)
-            else:
-                print("Error during Groq parsing:", e)
-                return {"job_related": False}
-
-    print("Failed after retries.")
-    return {"job_related": False}
-
-
-def truncate_to_token_limit(text: str, max_tokens: int = MAX_TOKENS) -> str:
-    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")  # closest supported
-    tokens = encoding.encode(text)
-    if len(tokens) > max_tokens:
-        print(f"Truncating from {len(tokens)} to {max_tokens} tokens")
-        tokens = tokens[:max_tokens]
-    return encoding.decode(tokens)
+    except Exception as e:
+        print(f"Error in AI parsing: {str(e)}")
+        print(f"Raw response: {response_text if 'response_text' in locals() else 'No response'}")
+        return {"job_related": False}

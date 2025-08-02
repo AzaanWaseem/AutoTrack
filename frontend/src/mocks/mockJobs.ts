@@ -2,63 +2,43 @@ import type { Job } from '../types';
 
 export const mockJobs: Job[] = [
   {
+    id: '1',
     company: 'OpenAI',
     position: 'Software Engineer',
-    application_date: '2025-07-20',
-    description: 'Working on cutting-edge AI research and infrastructure.',
+    first_applied: '2025-07-20',
+    current_status: 'Application Received',
+    latest_update_at: '2025-07-20T14:30:00Z'
   },
   {
+    id: '2',
     company: 'Google',
     position: 'SWE Intern',
-    application_date: '2025-07-10',
-    description: 'Backend development for internal tools.',
+    first_applied: '2025-07-10',
+    current_status: 'Technical Interview',
+    latest_update_at: '2025-07-15T09:00:00Z'
   },
   {
+    id: '3',
     company: 'Meta',
     position: 'Frontend Engineer Intern',
-    application_date: '2025-07-12',
-    description: 'Building sleek and fast user interfaces using React.',
+    first_applied: '2025-07-12',
+    current_status: 'Assessment',
+    latest_update_at: '2025-07-14T16:45:00Z'
   },
   {
+    id: '4',
     company: 'Amazon',
     position: 'Software Development Engineer',
-    application_date: '2025-07-18',
-    description: 'Developing scalable AWS services and tools.',
+    first_applied: '2025-07-18',
+    current_status: 'Screen',
+    latest_update_at: '2025-07-19T11:20:00Z'
   },
   {
-    company: 'Netflix',
-    position: 'UI/UX Design Intern',
-    application_date: '2025-07-08',
-    description: 'Designing intuitive experiences for streaming users.',
-  },
-  {
-    company: 'Spotify',
-    position: 'Backend Developer',
-    application_date: '2025-07-15',
-    description: 'Handling music recommendation systems and data pipelines.',
-  },
-  {
-    company: 'Stripe',
-    position: 'Product Engineer',
-    application_date: '2025-07-14',
-    description: 'Collaborating across product and engineering for payments.',
-  },
-  {
+    id: '5',
     company: 'Microsoft',
     position: 'Software Engineering Intern',
-    application_date: '2025-07-05',
-    description: 'Working on productivity tools in the Office suite.',
-  },
-  {
-    company: 'Tesla',
-    position: 'Autopilot Engineer',
-    application_date: '2025-07-11',
-    description: 'AI perception and vehicle sensor integration.',
-  },
-  {
-    company: 'Asana',
-    position: 'Full Stack Intern',
-    application_date: '2025-07-22',
-    description: 'Contributing to task management features and backend APIs.',
-  },
+    first_applied: '2025-07-05',
+    current_status: 'Offer',
+    latest_update_at: '2025-07-25T13:15:00Z'
+  }
 ];
