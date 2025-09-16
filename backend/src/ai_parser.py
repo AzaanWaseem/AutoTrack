@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL_NAME = "llama3-70b-8192"
+MODEL_NAME = "llama-3.3-70b-versatile"
 
 def truncate_to_token_limit(text: str, max_tokens: int = 4000) -> str:
     """
